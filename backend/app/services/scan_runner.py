@@ -31,7 +31,20 @@ def run_scan(scan_id: int) -> None:
             output_path = output_dir / f"{scan.id}{suffix}"
             if scan.tool == "trivy":
                 image = validate_image_name(target.value)
-                command = ["trivy", "image", "--format", "json", "--quiet", "--output", str(output_path), image]
+                database_repositories = [
+                    repository.strip()
+                    for repository in settings.trivy_db_repositories.split(",")
+                    if repository.strip()
+                ]
+                database_flags = [
+                    flag
+                    for repository in database_repositories
+                    for flag in ("--db-repository", repository)
+                ]
+                command = [
+                    "trivy", "image", *database_flags, "--format", "json", "--quiet",
+                    "--output", str(output_path), image,
+                ]
                 timeout = settings.trivy_timeout
                 parser = parse_trivy
             else:

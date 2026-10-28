@@ -15,6 +15,9 @@ services:
 
   backend:
     build: ./backend
+    dns:
+      - ${BACKEND_DNS_1:-8.8.8.8}
+      - ${BACKEND_DNS_2:-1.1.1.1}
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://vuln:local-only-change-me@postgres:5432/vulniq}
       ADMIN_USER: ${ADMIN_USER:-admin}
@@ -22,9 +25,10 @@ services:
       JWT_SECRET: ${JWT_SECRET:-local-only-change-this-secret}
       SCAN_DIR: ${SCAN_DIR:-/data/scans}
       TRIVY_TIMEOUT: ${TRIVY_TIMEOUT:-600}
+      TRIVY_DB_REPOSITORIES: ${TRIVY_DB_REPOSITORIES:-docker.io/aquasec/trivy-db,public.ecr.aws/aquasecurity/trivy-db,ghcr.io/aquasecurity/trivy-db}
       NMAP_TIMEOUT: ${NMAP_TIMEOUT:-300}
     ports:
-      - "8000:8000"
+      - "18080:8000"
     volumes:
       - scandata:/data
       - trivycache:/root/.cache/trivy
@@ -35,7 +39,7 @@ services:
   frontend:
     build: ./frontend
     environment:
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000/api/v1}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:18080/api/v1}
     ports:
       - "5173:5173"
     depends_on:
@@ -51,3 +55,11 @@ volumes:
   pgdata:
   scandata:
   trivycache:
+
+
+
+
+
+
+
+
