@@ -6,6 +6,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl nmap \
     && rm -rf /var/lib/apt/lists/*
+RUN curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+    | sh -s -- -b /usr/local/bin
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

@@ -10,5 +10,6 @@ dist/
 coverage/
 data/
 *.log
+*.tmp
 .DS_Store
 Thumbs.db
